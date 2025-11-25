@@ -35,8 +35,7 @@ imageUpload.addEventListener('change', async function() {
             // 2. Chạy OCR bằng phương pháp đơn giản (không dùng Worker)
             try {
                 updateStatus("SẴN SÀNG OCR: Bắt đầu tải Tiếng Việt...");
-                
-                // Dùng Tesseract.recognize() trực tiếp
+                 // Dùng Tesseract.recognize() trực tiếp
                 const { data: { text } } = await Tesseract.recognize(
                     mangaCanvas,
                     'vie', // Ngôn ngữ Tiếng Việt 
@@ -59,6 +58,7 @@ imageUpload.addEventListener('change', async function() {
                 
                 // Hiển thị kết quả
                 alert("KẾT QUẢ OCR (TIẾNG VIỆT) LÀ: \n\n" + text);
+               
 
             } catch (error) {
                 // Báo lỗi nếu Tesseract bị đứng hoặc lỗi mạng
@@ -69,6 +69,7 @@ imageUpload.addEventListener('change', async function() {
     };
     reader.readAsDataURL(file);
 });
+
 
 
 
