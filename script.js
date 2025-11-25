@@ -39,9 +39,16 @@ imageUpload.addEventListener('change', async function() {
                 // Dùng Tesseract.recognize() trực tiếp
                 const { data: { text } } = await Tesseract.recognize(
                     mangaCanvas,
-                    'eng', // Ngôn ngữ Tiếng Anh
-                    { 
-                        logger: m => {
+                    'vie', // Ngôn ngữ Tiếng Việt
+{ 
+    logger: m => {
+        // ... (logger code)
+    },
+    // THÊM: Tùy chọn Pre-processing (Xử lý trước ảnh)
+    // Đây là code ví dụ để chuyển ảnh sang đen trắng.
+    tessedit_pageseg_mode: 3, // Giúp phân đoạn ảnh truyện tranh tốt hơn
+    tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZáàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴĐ' // Lọc ký tự Tiếng Việt
+}
                             if (m.status === 'recognizing') {
                                 updateStatus(`Đang nhận dạng... (${Math.round(m.progress * 100)}%)`);
                             } else if (m.status === 'loading language traineddata') {
@@ -67,4 +74,5 @@ imageUpload.addEventListener('change', async function() {
     };
     reader.readAsDataURL(file);
 });
+
 
