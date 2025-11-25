@@ -2,57 +2,71 @@
 const imageUpload = document.getElementById('imageUpload');
 const mangaCanvas = document.getElementById('mangaCanvas');
 const ctx = mangaCanvas.getContext('2d');
-const processingMessage = document.querySelector('p'); // Dòng "Đang xử lý..."
+const processingMessage = document.querySelector('p'); 
 
 // Ẩn dòng "Đang xử lý..." ban đầu
 processingMessage.style.display = 'none';
 
+// Hàm logger mới để cập nhật tiến trình ra màn hình
+function updateStatus(message) {
+    processingMessage.style.display = 'block';
+    processingMessage.textContent = "V đang làm việc: " + message;
+}
+
+
 // Lắng nghe sự kiện khi người dùng chọn file
 imageUpload.addEventListener('change', async function() {
-    // Nếu không có file, thoát
     if (!this.files || this.files.length === 0) return;
 
     const file = this.files[0];
     
-    // Hiển thị dòng đang xử lý
-    processingMessage.style.display = 'block';
+    // Bắt đầu xử lý
+    updateStatus("Đang đọc tệp tin...");
     
-    // Tạo đối tượng FileReader để đọc file
     const reader = new FileReader();
     reader.onload = function(e) {
         const img = new Image();
         img.onload = async function() {
-            // 1. Thiết lập kích thước Canvas bằng kích thước ảnh
             mangaCanvas.width = img.width;
             mangaCanvas.height = img.height;
-
-            // 2. Vẽ ảnh lên Canvas
             ctx.drawImage(img, 0, 0);
 
-            // 3. Khởi tạo Tesseract và chạy OCR
+            // Khởi tạo Tesseract và chạy OCR
             const worker = await Tesseract.createWorker({
-                // Dùng log để mày xem tiến trình trong Console (Developer Tools)
-                logger: m => console.log(m) 
+                // Hàm logger mới, cập nhật trực tiếp vào thẻ <p>
+                logger: m => {
+                    if (m.status === 'recognizing') {
+                        updateStatus(`Đang nhận dạng... (${Math.round(m.progress * 100)}%)`);
+                    } else if (m.status === 'loading language traineddata') {
+                        updateStatus(`Đang tải Tiếng Anh... (${Math.round(m.progress * 100)}%)`);
+                    } else {
+                        updateStatus(m.status);
+                    }
+                } 
             });
 
-            // Set ngôn ngữ nhận dạng là Tiếng Nhật (Jap)
-            await worker.loadLanguage('eng');
-            await worker.initialize('eng');
+            // Vẫn dùng Tiếng Anh (eng) để test cho nhanh
+            try {
+                await worker.loadLanguage('eng');
+                await worker.initialize('eng');
+                
+                updateStatus("Bắt đầu nhận dạng chữ viết...");
+                const { data: { text } } = await worker.recognize(mangaCanvas);
+                
+                await worker.terminate();
+                
+                processingMessage.style.display = 'none';
+                
+                // Hiển thị kết quả
+                alert("Kết quả OCR (Tiếng Anh) là: \n\n" + text);
 
-            // 4. Chạy nhận dạng chữ viết trên Canvas
-            const { data: { text } } = await worker.recognize(mangaCanvas);
-            
-            // 5. Kết thúc worker (rất quan trọng để giải phóng bộ nhớ)
-            await worker.terminate();
-            
-            // 6. Ẩn dòng đang xử lý và hiển thị kết quả
-            processingMessage.style.display = 'none';
-            
-            // Tạm thời, tao chỉ alert kết quả để mày kiểm tra
-            alert("Kết quả OCR (Tiếng Nhật) là: \n\n" + text);
+            } catch (error) {
+                // Báo lỗi nếu Tesseract bị đứng hoặc lỗi mạng
+                updateStatus("LỖI KHỦNG KHIẾP: " + error.message);
+                await worker.terminate();
+            }
         };
         img.src = e.target.result;
     };
     reader.readAsDataURL(file);
-
 });
