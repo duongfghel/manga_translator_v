@@ -36,8 +36,8 @@ imageUpload.addEventListener('change', async function() {
             });
 
             // Set ngôn ngữ nhận dạng là Tiếng Nhật (Jap)
-            await worker.loadLanguage('jpn');
-            await worker.initialize('jpn');
+            await worker.loadLanguage('eng');
+            await worker.initialize('eng');
 
             // 4. Chạy nhận dạng chữ viết trên Canvas
             const { data: { text } } = await worker.recognize(mangaCanvas);
@@ -54,4 +54,5 @@ imageUpload.addEventListener('change', async function() {
         img.src = e.target.result;
     };
     reader.readAsDataURL(file);
+
 });
