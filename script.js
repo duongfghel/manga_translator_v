@@ -30,6 +30,7 @@ imageUpload.addEventListener('change', async function() {
             mangaCanvas.width = img.width;
             mangaCanvas.height = img.height;
             ctx.drawImage(img, 0, 0);
+            mangaCanvas.style.border = '2px solid red';
 
             // 2. Chạy OCR bằng phương pháp đơn giản (không dùng Worker)
             try {
@@ -66,3 +67,4 @@ imageUpload.addEventListener('change', async function() {
     };
     reader.readAsDataURL(file);
 });
+
