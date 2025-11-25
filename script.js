@@ -39,27 +39,22 @@ imageUpload.addEventListener('change', async function() {
                 // Dùng Tesseract.recognize() trực tiếp
                 const { data: { text } } = await Tesseract.recognize(
                     mangaCanvas,
-                    'vie', // Ngôn ngữ Tiếng Việt
-{ 
-    logger: m => {
-        // ... (logger code)
-    },
-    // THÊM: Tùy chọn Pre-processing (Xử lý trước ảnh)
-    // Đây là code ví dụ để chuyển ảnh sang đen trắng.
-    tessedit_pageseg_mode: 3, // Giúp phân đoạn ảnh truyện tranh tốt hơn
-    tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZáàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴĐ' // Lọc ký tự Tiếng Việt
-}
-                            if (m.status === 'recognizing') {
-                                updateStatus(`Đang nhận dạng... (${Math.round(m.progress * 100)}%)`);
-                            } else if (m.status === 'loading language traineddata') {
-                                updateStatus(`Đang tải Tiếng Anh... (${Math.round(m.progress * 100)}%)`);
-                            } else {
-                                updateStatus(m.status);
-                            }
-                        }
-                    }
-                );
-                
+                    'vie', // Ngôn ngữ Tiếng Việt 
+                    { 
+                        logger: m => {
+                            if (m.status === 'recognizing') {
+                                updateStatus(`Đang nhận dạng... (${Math.round(m.progress * 100)}%)`);
+                            } else if (m.status === 'loading language traineddata') {
+                                updateStatus(`Đang tải Tiếng Việt... (${Math.round(m.progress * 100)}%)`);
+                            } else {
+                                updateStatus(m.status);
+                            }
+                        },
+                        // Tùy chọn Pre-processing
+                        tessedit_pageseg_mode: 3,
+                        tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZáàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸἴĐ' 
+                    }
+                );                
                 processingMessage.style.display = 'none';
                 
                 // Hiển thị kết quả
@@ -74,6 +69,7 @@ imageUpload.addEventListener('change', async function() {
     };
     reader.readAsDataURL(file);
 });
+
 
 
 
