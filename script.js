@@ -58,7 +58,7 @@ imageUpload.addEventListener('change', async function() {
                 processingMessage.style.display = 'none';
                 
                 // Hiển thị kết quả
-                alert("Kết quả OCR (Tiếng Anh) là: \n\n" + text);
+                alert("KẾT QUẢ OCR (TIẾNG VIỆT) LÀ: \n\n" + text);
 
             } catch (error) {
                 // Báo lỗi nếu Tesseract bị đứng hoặc lỗi mạng
@@ -69,6 +69,7 @@ imageUpload.addEventListener('change', async function() {
     };
     reader.readAsDataURL(file);
 });
+
 
 
 
